@@ -10,9 +10,6 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/secretsmanager"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/sheets/v4"
 	// 参考：https://github.com/sminamot/sheets-go-example/blob/master/main.go
@@ -21,44 +18,15 @@ import (
 
 const REGION = "ap-northeast-1"
 
-func getSecret() (string, string, string, error) {
-	secretName := "dev/slack"
-	region := "ap-northeast-1"
-
-	//Create a Secrets Manager client
-	svc := secretsmanager.New(session.New(), aws.NewConfig().WithRegion(region))
-	input := &secretsmanager.GetSecretValueInput{
-		SecretId:     aws.String(secretName),
-		VersionStage: aws.String("AWSCURRENT"), // VersionStage defaults to AWSCURRENT if unspecified
-	}
-
-	result, err := svc.GetSecretValue(input)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	secretString := aws.StringValue(result.SecretString)
-
-	res := make(map[string]interface{})
-	if err := json.Unmarshal([]byte(secretString), &res); err != nil {
-		log.Fatal(err)
-	}
-
-	return res["SECRET"].(string), res["SHEET_ID"].(string), res["WEBHOOK_URL"].(string), nil
-}
-
 func run() error {
 
-	secret, spreadsheetID, IncomingUrl, err := getSecret()
-	if err != nil {
-		log.Fatal(err)
-	}
-	srv := getGSConnection(secret)
+	config := getSecret()
+	srv := getGSConnection(config.Secret)
 
-	memberRow := getValueRange(srv, spreadsheetID, "Sheet1!A2:A")
+	memberRow := getValueRange(srv, config.SheetID, "Sheet1!A2:A")
 	n_members := len(memberRow.Values)
 	updateRange := fmt.Sprintf("Sheet1!B2:B%s", strconv.Itoa(n_members+1))
-	facilitatorRow := getValueRange(srv, spreadsheetID, updateRange)
+	facilitatorRow := getValueRange(srv, config.SheetID, updateRange)
 
 	if (n_members == 0) || (len(facilitatorRow.Values) == 0) {
 		log.Fatal("No data found.")
@@ -66,10 +34,10 @@ func run() error {
 	}
 
 	fIndex := findFacilitatorIndex(facilitatorRow)
-	postMessage(IncomingUrl, fmt.Sprintf("今日の司会は<%s>", memberRow.Values[fIndex][0]))
+	postMessage(config.Webhook, fmt.Sprintf("今日の司会は<%s>", memberRow.Values[fIndex][0]))
 
 	// 更新
-	_, err = srv.Spreadsheets.Values.Update(spreadsheetID, updateRange, rotate(facilitatorRow, fIndex, n_members)).ValueInputOption("RAW").Do()
+	_, err := srv.Spreadsheets.Values.Update(config.SheetID, updateRange, rotate(facilitatorRow, fIndex, n_members)).ValueInputOption("RAW").Do()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -127,8 +95,8 @@ func getGSConnection(secret string) *sheets.Service {
 	return srv
 }
 
-func getValueRange(srv *sheets.Service, spreadsheetID string, readRange string) *sheets.ValueRange {
-	resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, readRange).Do()
+func getValueRange(srv *sheets.Service, sheetID string, readRange string) *sheets.ValueRange {
+	resp, err := srv.Spreadsheets.Values.Get(sheetID, readRange).Do()
 	if err != nil {
 		log.Fatal(err)
 	}
