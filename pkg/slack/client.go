@@ -1,4 +1,4 @@
-package pkg
+package slack
 
 import (
 	"encoding/json"
@@ -17,10 +17,10 @@ type Slack struct {
 	Channel   string `json:"channel"`
 }
 
-func postMessage(IncomingUrl string, msg string) {
+func PostMessage(IncomingUrl string, msg string) {
 	resp, err := http.PostForm(
 		IncomingUrl,
-		url.Values{"payload": {string(getPayload(msg))}},
+		url.Values{"payload": {string(GetPayload(msg))}},
 	)
 	if err != nil {
 		log.Fatal("HTTPリクエストに失敗しました。, err:" + fmt.Sprint(err))
@@ -31,7 +31,7 @@ func postMessage(IncomingUrl string, msg string) {
 	fmt.Printf("Http Status:%s, result: %s\n", resp.Status, contents)
 }
 
-func getPayload(msg string) []byte {
+func GetPayload(msg string) []byte {
 	params := Slack{
 		Text:      fmt.Sprintf("%s", msg),
 		Username:  "From golang to slack hello",

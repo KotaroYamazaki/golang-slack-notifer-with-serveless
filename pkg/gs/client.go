@@ -1,4 +1,4 @@
-package pkg
+package gs
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"google.golang.org/api/sheets/v4"
 )
 
-func getGSConnection(secret string) *sheets.Service {
+func GetGSConnection(secret string) *sheets.Service {
 
 	conf, err := google.JWTConfigFromJSON([]byte(secret), sheets.SpreadsheetsScope)
 	if err != nil {
@@ -23,7 +23,7 @@ func getGSConnection(secret string) *sheets.Service {
 	return srv
 }
 
-func getValueRange(srv *sheets.Service, sheetID string, readRange string) *sheets.ValueRange {
+func GetValueRange(srv *sheets.Service, sheetID string, readRange string) *sheets.ValueRange {
 	resp, err := srv.Spreadsheets.Values.Get(sheetID, readRange).Do()
 	if err != nil {
 		log.Fatal(err)
@@ -31,7 +31,7 @@ func getValueRange(srv *sheets.Service, sheetID string, readRange string) *sheet
 	return resp
 }
 
-func findFacilitatorIndex(s *sheets.ValueRange) int {
+func FindFacilitatorIndex(s *sheets.ValueRange) int {
 	index := 0
 	for _, row := range s.Values {
 		if row[0] == "this" {
@@ -42,7 +42,7 @@ func findFacilitatorIndex(s *sheets.ValueRange) int {
 	return -1
 }
 
-func rotate(s *sheets.ValueRange, fIndex int, sum int) *sheets.ValueRange {
+func Rotate(s *sheets.ValueRange, fIndex int, sum int) *sheets.ValueRange {
 	s.Values[fIndex], s.Values[(fIndex+1)%sum] = s.Values[(fIndex+1)%sum], s.Values[fIndex]
 	return s
 }
