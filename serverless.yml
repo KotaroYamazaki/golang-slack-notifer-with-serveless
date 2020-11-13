@@ -58,7 +58,7 @@ functions:
   slack:
     handler: bin/main
     events:
-      - schedule: cron(30 01 * * ? *)
+      - schedule: cron(30 01 * * 1-5 *)
     environment:
       SELECT_NAME: dev/slack
 
