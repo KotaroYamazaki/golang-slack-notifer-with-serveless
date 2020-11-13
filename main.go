@@ -8,8 +8,6 @@ import (
 	// https://sminamot-dev.hatenablog.com/entry/2019/12/05/204403
 )
 
-const REGION = "ap-northeast-1"
-
 func run() error {
 
 	config := getSecret()

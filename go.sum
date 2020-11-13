@@ -35,6 +35,7 @@ dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/KotaroYamazaki/golang-slack-notifer-with-serveless v0.0.0-20201113021514-4bc7d2feca34 h1:AkeUymiwZFCE+89MQK5PhHKY2WRytRzQF5s8ohrMrGU=
+github.com/KotaroYamazaki/golang-slack-notifer-with-serveless v0.0.0-20201113085535-b7d4ae4fbc2a h1:+5twkAr4Syr64kwEEpbHw1yGN+UaS5G9RAz19oAfD30=
 github.com/aws/aws-lambda-go v1.20.0 h1:ZSweJx/Hy9BoIDXKBEh16vbHH0t0dehnF8MKpMiOWc0=
 github.com/aws/aws-lambda-go v1.20.0/go.mod h1:jJmlefzPfGnckuHdXX7/80O3BvUUi12XOkbv4w9SGLU=
 github.com/aws/aws-sdk-go v1.35.26 h1:MawRvDpAp/Ai859dPC1xo1fdU/BIkijoHj0DwXLXXkI=
