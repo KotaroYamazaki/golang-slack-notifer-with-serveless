@@ -8,6 +8,7 @@ import (
 	"github.com/KotaroYamazaki/golang-slack-notifer-with-serveless/pkg/gs"
 	"github.com/KotaroYamazaki/golang-slack-notifer-with-serveless/pkg/slack"
 	"github.com/KotaroYamazaki/golang-slack-notifer-with-serveless/project/config"
+	"github.com/aws/aws-lambda-go/lambda"
 )
 
 // 参考：https://github.com/sminamot/sheets-go-example/blob/master/main.go
@@ -30,7 +31,7 @@ func run() error {
 	}
 
 	fIndex := gs.FindFacilitatorIndex(facilitatorRow)
-	slack.PostMessage(config.Webhook, fmt.Sprintf("今日の司会は<%s>", memberRow.Values[fIndex][0]))
+	slack.PostMessage(config.Webhook, fmt.Sprintf("今日の朝会の司会は<%s>\n次回は%sです！", memberRow.Values[fIndex][0], memberRow.Values[(fIndex+1)%nMembers][0]))
 
 	// 更新
 	_, err := srv.Spreadsheets.Values.Update(config.SheetID, updateRange, gs.Rotate(facilitatorRow, fIndex, nMembers)).ValueInputOption("RAW").Do()
@@ -42,6 +43,5 @@ func run() error {
 }
 
 func main() {
-	run()
-	//lambda.Start(run)
+	lambda.Start(run)
 }
