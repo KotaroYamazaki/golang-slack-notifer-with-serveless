@@ -1,5 +1,7 @@
 # REFERENCE
 - https://github.com/serverless/serverless-golang
+- https://github.com/sminamot/sheets-go-example/blob/master/main.go
+- https://sminamot-dev.hatenablog.com/entry/2019/12/05/204403
 
 ## Quick Start
 
